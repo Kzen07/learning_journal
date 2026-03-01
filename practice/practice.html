@@ -1,13 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>TODO List</title>
+    <link rel="stylesheet" href="practice.css">
 </head>
 
 <body>
+
+    <div class="container">
+        <h1>Мой TODO список</h1>
+
+        <form id="todoForm">
+            <input type="text" id="taskInput" placeholder="Что нужно сделать?" required autocomplete="off">
+            <button type="submit">Добавить</button>
+        </form>
+
+        <div id="message"></div>
+
+        <ul id="taskList"></ul>
+    </div>
+
     <script src="practice.js"></script>
 </body>
 
