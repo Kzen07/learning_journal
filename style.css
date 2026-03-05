@@ -1,0 +1,34 @@
+/* ... твой предыдущий CSS ... */
+
+#counter {
+  text-align: center;
+  margin: 15px 0;
+  font-weight: bold;
+  color: #555;
+}
+
+#clearAllBtn {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 24px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#clearAllBtn:hover {
+  background: #c0392b;
+}
+
+/* Анимация появления задачи */
+li {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

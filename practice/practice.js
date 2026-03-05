@@ -1,70 +1,121 @@
-// День 1: Селекторы и манипуляции
+// =============================================
+// Неделя 1: переменные, условия, циклы, функции, массивы
+// Неделя 2: стрелочные функции, объекты, spread/rest, array methods
+// Неделя 3: DOM, события, формы, валидация, preventDefault
+// =============================================
+
+// День 1 → const/let, типы
 const todoForm = document.querySelector('#todoForm');
 const taskInput = document.querySelector('#taskInput');
-const messageDiv = document.querySelector('#message');
+const message = document.querySelector('#message');
 const taskList = document.querySelector('#taskList');
 
-// День 2: События (input + submit)
+let tasks = []; // массив объектов задач
+
+// День 4 → функция (declaration) + return
+function showMessage(text, type = 'info') {
+    message.textContent = text;
+    message.className = `message ${type}`;
+}
+
+// День 1 → стрелочная функция + условия
+const validateTask = (text) => {
+    if (typeof text !== 'string') return false;
+    if (text.trim().length < 3) return false;
+    return true;
+};
+
+// День 2 → объект + метод
+const createTask = (text) => ({
+    id: Date.now(),
+    text: text.trim(),
+    completed: false,
+    toggleCompleted() {
+        this.completed = !this.completed;
+    }
+});
+
+// День 3 → событие input + e.target.value + classList
 taskInput.addEventListener('input', (e) => {
     const value = e.target.value.trim();
 
     if (value.length === 0) {
-        messageDiv.textContent = '';
-        messageDiv.className = '';
+        showMessage('', 'info');
+        taskInput.classList.remove('error', 'success');
     } else if (value.length < 3) {
-        messageDiv.textContent = 'Задача слишком короткая (минимум 3 символа)';
-        messageDiv.className = 'error';
+        showMessage('Минимум 3 символа', 'error');
+        taskInput.classList.add('error');
+        taskInput.classList.remove('success');
     } else {
-        messageDiv.textContent = 'Готово к добавлению!';
-        messageDiv.className = 'success';
+        showMessage('Можно добавить!', 'success');
+        taskInput.classList.add('success');
+        taskInput.classList.remove('error');
     }
 });
 
+// День 3 → submit + preventDefault + e.target.value
 todoForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // День 3: предотвращаем перезагрузку
+    e.preventDefault();
 
-    const taskText = taskInput.value.trim();
+    const text = taskInput.value.trim();
 
-    // День 3: валидация
-    if (taskText.length < 3) {
-        messageDiv.textContent = 'Введите задачу минимум из 3 символов!';
-        messageDiv.className = 'error';
+    if (!validateTask(text)) {
+        showMessage('Задача слишком короткая!', 'error');
         taskInput.focus();
         return;
     }
 
-    // Создаём новую задачу (День 1: манипуляции DOM)
-    const li = document.createElement('li');
-    li.innerHTML = `
-    <span>${taskText}</span>
-    <button type="button">Удалить</button>
-  `;
+    // День 2 → spread + объект
+    const newTask = createTask(text);
+    tasks = [...tasks, newTask]; // spread вместо push
 
-    // Добавляем в список
-    taskList.appendChild(li);
-
-    // Очищаем input и сообщение
+    renderTasks();
     taskInput.value = '';
-    messageDiv.textContent = 'Задача добавлена!';
-    messageDiv.className = 'success';
-
-    // Через 2 секунды убираем сообщение
-    setTimeout(() => {
-        messageDiv.textContent = '';
-        messageDiv.className = '';
-    }, 2000);
-
-    // День 2: События на динамически созданные элементы (удаление)
-    li.querySelector('button').addEventListener('click', () => {
-        li.remove();
-        messageDiv.textContent = 'Задача удалена';
-        messageDiv.className = 'success';
-        setTimeout(() => messageDiv.textContent = '', 1500);
-    });
-
-    // День 2 + День 1: отметка выполненной (клик по тексту)
-    const span = li.querySelector('span');
-    span.addEventListener('click', () => {
-        li.classList.toggle('completed');
-    });
+    showMessage('Задача добавлена!', 'success');
 });
+
+// День 2 + Неделя 1 → .forEach, .map, .find, .filter
+const renderTasks = () => {
+    taskList.innerHTML = ''; // очищаем
+
+    // Неделя 2: .forEach
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+
+        // Неделя 2: template literal + условный стиль
+        li.innerHTML = `
+      <span class="${task.completed ? 'completed' : ''}">
+        ${task.text}
+      </span>
+      <button data-id="${task.id}">Удалить</button>
+    `;
+
+        // День 2 → событие клика по тексту (toggle)
+        li.querySelector('span').addEventListener('click', () => {
+            task.toggleCompleted();
+            renderTasks();
+        });
+
+        // День 2 → событие удаления (динамический элемент)
+        li.querySelector('button').addEventListener('click', () => {
+            // Неделя 2: .filter
+            tasks = tasks.filter(t => t.id !== task.id);
+            renderTasks();
+            showMessage('Задача удалена', 'error');
+        });
+
+        taskList.appendChild(li);
+    });
+
+    // Неделя 1: цикл + условие (пример использования старого знания)
+    let completedCount = 0;
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].completed) completedCount++;
+    }
+    if (completedCount > 0 && completedCount === tasks.length) {
+        showMessage(`Все задачи выполнены! (${completedCount}/${tasks.length})`, 'success');
+    }
+};
+
+// Инициализация
+renderTasks();

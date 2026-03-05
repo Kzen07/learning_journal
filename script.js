@@ -1,246 +1,115 @@
-// let a = +prompt("Введите сумму покупки")
-// if (a>=10000){
-//     a = a - (a * 0.15)
-// }
-// else if (a>=5000){
-//     a = a - (a * 0.10)
-// }
-// else {
-//     console.log("Скидки нет")
-// }
-// console.log(`Итоговая сумма к оплате: ${a}`)
+const taskInput = document.querySelector('#taskInput');
+const todoForm = document.querySelector('#todoForm');
+const taskList = document.querySelector('#taskList');
+const message = document.querySelector('#message');
+const counter = document.querySelector('#counter');
+const clearAllBtn = document.querySelector('#clearAllBtn');
 
-// const name = prompt("Имя") ?? "Гость";
-// const age = +prompt("Возраст") || "Не указан";
+let tasks = [];
 
-// console.log(`Привет, ${name}!`);
-// console.log(`Возраст: ${age}`);
-// console.log(age >= 18 ? "Совершеннолетний ✅" : "Несовершеннолетний ❌");
+// ==================== ФУНКЦИИ ====================
 
-// // Level 2 Medium
-// const balance = +prompt("Баланс") || 0;
-// console.log(balance ? `Баланс: ${balance} ₸` : "Баланс пустой");
+function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
 
-// const cost = +prompt("Цена товара") || 0;
-// const disc = (+prompt("Скидка %") ?? 0) / 100;
-// console.log(`К оплате: ${cost * (1 - disc)} ₸`);
+function loadTasks() {
+    const saved = localStorage.getItem('tasks');
+    if (saved) {
+        tasks = JSON.parse(saved);
+    }
+}
 
-// const role = (prompt("Роль") || "user").toLowerCase();
-// console.log(role === "admin" ? "Полный доступ" : role === "moderator" ? "Модерация" : "Просмотр");
+function updateCounter() {
+    const total = tasks.length;
+    const done = tasks.filter(t => t.completed).length;
+    counter.textContent = `Задач: ${total} / Выполнено: ${done}`;
+}
 
-// // Уровень 3 — Чистая и современная версия
+function renderTasks() {
+    taskList.innerHTML = '';
 
-// // 1. Функция getDiscount (максимально коротко и красиво)
-// const getDiscount = (sum) => {
-//     const discount = sum >= 10000 ? 0.15 : sum >= 5000 ? 0.10 : 0;
-//     const total = sum * (1 - discount);
-//     return `К оплате: ${total} ₸ ${discount ? `(скидка ${discount*100}%)` : '(скидки нет)'}`;
-// };
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.textContent = task.text;
 
-// console.log(getDiscount(+prompt("Введите сумму")));
+        if (task.completed) {
+            li.classList.add('completed');
+        }
 
+        // Клик по тексту — отметка выполненной
+        li.addEventListener('click', () => {
+            task.completed = !task.completed;
+            saveTasks();
+            renderTasks();
+            updateCounter();
+        });
 
-// // 2. Можно ли водить?
-// const age2 = +prompt("Введите возраст") || 0;
-// const hasLicense = prompt("Есть права? (да/нет)")?.toLowerCase() === "да";
+        // Кнопка удаления
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Удалить';
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            tasks = tasks.filter(t => t.id !== task.id);
+            saveTasks();
+            renderTasks();
+            updateCounter();
+            message.textContent = 'Задача удалена';
+            setTimeout(() => message.textContent = '', 1500);
+        });
 
-// console.log(age2 >= 18 && hasLicense ? "Можно водить ✅" : "Нельзя водить ❌");
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+    });
 
+    updateCounter();
+}
 
-// // 3. Функция приветствия (исправленная и короткая)
-// const greet = (user) => {
-//     const name = user?.name ?? "Гость";
-//     console.log(`Привет, ${name}!`);
-// };
+// ==================== СОБЫТИЯ ====================
 
-// // Примеры использования:
-// greet(null);                    // Привет, Гость!
-// greet({ name: "Алдияр" });      // Привет, Алдияр!
-// greet({});                      // Привет, Гость!
+taskInput.addEventListener('input', () => {
+    if (taskInput.value.trim() === '') {
+        message.textContent = '';
+    }
+});
 
+todoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-// // 4. Чётное число больше 100
-// const num = +prompt("Введите число") || 0;
-// console.log(num % 2 === 0 && num > 100 
-//     ? "Большое чётное число ✅" 
-//     : "Не соответствует условиям");
+    const text = taskInput.value.trim();
 
-
-// // 5. Калькулятор чаевых (очень чисто)
-// const bill = +prompt("Сумма счёта") || 0;
-// const tipPercent = (+prompt("Процент чаевых") ?? 10) / 100;
-
-// const tipAmount = bill * tipPercent;
-// const total = bill + tipAmount;
-
-// console.log(`Счёт: ${bill} ₸ | Чаевые: ${tipAmount} ₸ | Итого: ${total} ₸`);
-
-
-// // 6. formatPrice (самая чистая версия)
-// const formatPrice = (price, currency = "₸") => {
-//     if (price == null) return "Цена не указана";   // ловит null и undefined
-//     if (price === 0) return "Бесплатно";
-//     return `Цена: ${price} ${currency}`;
-// };
-
-// console.log(formatPrice(+prompt("Введите цену")));
-// console.log(formatPrice(0));
-// console.log(formatPrice(null));
-// const heigh= 10
-// for (let a=0;a<heigh;a++){
-//     let row=""
-//     for (let b=0;b<=a;b++){
-//         row+="*"
-//     }
-//     console.log(row)
-// }
-
-// function biggerone(a,b,c){
-//     const bigone = (a>b && a>c) ? a : (b>a && b>c) ? b : c
-//     return bigone
-// }
-// const num1 = +prompt("Введите первое число")
-// const num2 = +prompt("Введите второе число")
-// const num3 = +prompt("Введите третье число")
-// console.log(`Наибольшее число: ${biggerone(num1,num2,num3)}`)
-
-
-
-
-// result of first weak of learning JavaScript
-// Exam and test my knowledge about JavaScript
-
-// Задача
-// Создай программу, которая позволяет пользователю:
-// Добавлять расходы (через prompt)
-// Сумма (число)
-// Категория (например: еда, транспорт, развлечения, другое)
-// Выводить список всех расходов (с номерами)
-// Считать общую сумму расходов
-// Удалять расход по номеру
-// Показывать расходы по категориям (используй switch или объект)
-// Выходить из программы по команде
-
-
-// Требования (обязательно использовать всё из первой недели):
-// День 1: prompt, console.log, let/const, правильные типы (Number())
-// День 2: if/else, switch, &&, ||
-// День 3: for или while (для вывода списка)
-// День 4: Минимум 3 функции (например: addExpense(), showExpenses(), deleteExpense(), calculateTotal())
-// День 5: Массив объектов (например expenses = []), методы push, splice или pop
-// День 6: В конце залить весь проект в GitHub (репозиторий expense-tracker-week1)
-
-// Пример работы программы (как должно выглядеть в консоли):
-// textЧто хотите сделать?
-// 1. Добавить расход
-// 2. Показать все расходы
-// 3. Общая сумма
-// 4. Удалить расход
-// 5. Показать по категориям
-// 6. Выход
-
-// Ваш выбор: 1
-
-// Введите сумму: 2500
-// Введите категорию: еда
-
-// Расход добавлен!
-
-// Ваш выбор: 2
-
-// 1. 2500 ₸ — еда
-// 2. 800 ₸ — транспорт
-// Общая сумма: 3300 ₸
-
-// Бонусные задания (для сильной проверки):
-// Добавь проверку: если сумма не число → "Ошибка: введите число"
-// Добавь категорию "доход" и считай баланс (доходы - расходы)
-// Сделай функцию, которая находит самый дорогой расход
-// Добавь возможность редактировать расход по номеру
-// Трекер расходов — Финальная версия после первой недели
-
-let expenses = [];
-
-function addExpense() {
-    const amount = +prompt("Введите сумму расхода:");
-    if (isNaN(amount) || amount <= 0) {
-        console.log("❌ Ошибка: введите положительное число!");
+    if (text.length < 3) {
+        message.textContent = 'Задача должна быть минимум 3 символа!';
         return;
     }
 
-    const category = prompt("Введите категорию (еда, транспорт и т.д.):") || "другое";
+    const newTask = {
+        id: Date.now(),
+        text: text,
+        completed: false
+    };
 
-    expenses.push({ amount, category });
-    console.log(`✅ Добавлено: ${amount} ₸ — ${category}`);
-}
+    tasks.push(newTask);
+    saveTasks();
+    renderTasks();
 
-function showExpenses() {
-    if (expenses.length === 0) {
-        console.log("📭 Расходов пока нет.");
-        return;
+    taskInput.value = '';
+    message.textContent = 'Задача добавлена!';
+    setTimeout(() => message.textContent = '', 1500);
+});
+
+// Очистить всё
+clearAllBtn.addEventListener('click', () => {
+    if (confirm('Очистить весь список?')) {
+        tasks = [];
+        saveTasks();
+        renderTasks();
+        message.textContent = 'Список очищен';
+        setTimeout(() => message.textContent = '', 1500);
     }
+});
 
-    console.log("📋 Список расходов:");
-    for (let i = 0; i < expenses.length; i++) {
-        console.log(`${i + 1}. ${expenses[i].amount} ₸ — ${expenses[i].category}`);
-    }
-}
+// ==================== ЗАПУСК ====================
 
-function calculateTotal() {
-    let total = 0;
-    for (let i = 0; i < expenses.length; i++) {
-        total += expenses[i].amount;
-    }
-    return total;
-}
-
-function deleteExpense() {
-    const index = +prompt("Введите номер расхода для удаления:") - 1;
-
-    if (index >= 0 && index < expenses.length) {
-        const deleted = expenses.splice(index, 1)[0];
-        console.log(`🗑 Удалено: ${deleted.amount} ₸ — ${deleted.category}`);
-    } else {
-        console.log("❌ Неверный номер!");
-    }
-}
-
-function showByCategory() {
-    const categoryTotals = {};
-
-    for (let i = 0; i < expenses.length; i++) {
-        const cat = expenses[i].category;
-        categoryTotals[cat] = (categoryTotals[cat] || 0) + expenses[i].amount;
-    }
-
-    console.log("📊 Расходы по категориям:");
-    for (const cat in categoryTotals) {
-        console.log(`${cat}: ${categoryTotals[cat]} ₸`);
-    }
-}
-
-// Главное меню
-let choice;
-do {
-    choice = +prompt(`Что хотите сделать?
-1. Добавить расход
-2. Показать все расходы
-3. Общая сумма
-4. Удалить расход
-5. Показать по категориям
-6. Выход`);
-
-    if (choice === 1) addExpense();
-    else if (choice === 2) showExpenses();
-    else if (choice === 3) console.log(`💰 Общая сумма: ${calculateTotal()} ₸`);
-    else if (choice === 4) deleteExpense();
-    else if (choice === 5) showByCategory();
-    else if (choice === 6) console.log("👋 До свидания!");
-    else console.log("❌ Неверный выбор!");
-
-} while (choice !== 6);
-
-console.log("Менеджер задач.")
-// првоверка
-// Менеджер задач — Исправленная версия после первой недели
-
+loadTasks();
+renderTasks();

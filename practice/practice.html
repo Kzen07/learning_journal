@@ -4,21 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO List</title>
+    <title>TODO List — 3 недели обучения</title>
     <link rel="stylesheet" href="practice.css">
 </head>
 
 <body>
 
     <div class="container">
-        <h1>Мой TODO список</h1>
+        <h1>Мой TODO List</h1>
 
         <form id="todoForm">
-            <input type="text" id="taskInput" placeholder="Что нужно сделать?" required autocomplete="off">
+            <input type="text" id="taskInput" placeholder="Введите задачу (мин. 3 символа)" required>
             <button type="submit">Добавить</button>
         </form>
 
-        <div id="message"></div>
+        <div id="message" class="message"></div>
 
         <ul id="taskList"></ul>
     </div>
